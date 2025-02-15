@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ride
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - ride-network
+
+  server:
+    build:
+      context: .
+      dockerfile: DOCKERFILE
+    image: server
+    container_name: server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - ride-network
+
+networks:
+  ride-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
